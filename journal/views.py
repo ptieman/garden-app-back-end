@@ -13,6 +13,23 @@ import requests
 import os
 
 
+# HomePage
+
+class HomepageView(APIView):
+    def get(self, request):
+        latest_journal_entry = JournalEntry.objects.order_by('-journal_time_stamp')[0]
+
+        data = {
+            'latest_journal_entry' : {
+                'journal_title': latest_journal_entry.journal_title,
+                'journal_body': latest_journal_entry.journal_body,
+                'journal_time_stamp': latest_journal_entry.journal_time_stamp
+            },
+        }
+
+        return JsonResponse(data)
+
+
 # JOURNAL
 class JournalViewSet(APIView):
 
@@ -22,7 +39,7 @@ class JournalViewSet(APIView):
 
     def post(self, request, format=None):
         data = request.data
-        journal_entry = JournalEntry.objects.create(journal_title=data['title'], journal_body=data['text'], journal_time_stamp=datetime.datetime.now())
+        journal_entry = JournalEntry.objects.create(journal_title=data['journal_title'], journal_body=data['journal_body'], journal_time_stamp=datetime.datetime.now())
         return JsonResponse({"journal": journal_entry.to_dict()})
 
 class JournalIDSet(APIView):
@@ -68,7 +85,6 @@ class SeedViewSet(APIView):
         seed.save()
 
         return JsonResponse({"message": "Seed successfully added"})
- 
 
 
     def put(self, request, seed_id, format=None):
@@ -120,23 +136,31 @@ class GetUsers(APIView):
 class ToDoListView(APIView):
     def get(self, request, format=None):
         tasks = ToDoList.objects.all()
-        serializer = ToDoListSerializer(tasks, many=True)
+        data = {
+            'tasks' :  [{
+                'task_title': item.task_title
+            } for item in tasks]
+        }
+    
 
-        return JsonResponse(serializer.data, safe=False)
-
-class GetTasks(APIView):
+        return JsonResponse(data)
     def post(self, request, format=None):
 
-        task_title = request.data('task_title')
-        task_description = request.data('task_description')
+        task_title = request.data['task_title']
+        # task_description = request.data('task_description')
 
         task = ToDoList.objects.create(
             task_title=task_title,
-            task_description=task_description
+            # task_description=task_description
         )
         task.save()
 
         return JsonResponse({"message": "Task successfully added"})
+    
+
+
+# class GetTasks(APIView):
+    
 
         # DISABLED BC OF CALLS
 
