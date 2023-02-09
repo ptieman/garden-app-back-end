@@ -158,6 +158,13 @@ class ToDoListView(APIView):
         return JsonResponse({"message": "Task successfully added"})
     
 
+class DeleteTask(DestroyAPIView):
+    def delete(self, request, id):
+        print(f'Deleting task with id {id}')
+        task = get_object_or_404(ToDoList, pk=id)
+        task.delete()
+
+        return JsonResponse({'message': 'Task successfully deleted'})
 
 # class GetTasks(APIView):
     
