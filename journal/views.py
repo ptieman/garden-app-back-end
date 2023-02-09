@@ -59,55 +59,66 @@ class DeleteJournal(DestroyAPIView):
 # SEED LIST
 
 class SeedViewSet(APIView):
-    def get(self, request, format=None):
-        queryset = SeedList.objects.values()
-        return JsonResponse({"seeds": list(queryset)})
+    # def get(self, request, format=None):
+    #     queryset = SeedList.objects.values()
+    #     return JsonResponse({"seeds": list(queryset)})
 
-    # def post(self, request, format=None):
-    #     data = request.data
-    #     seed_entry = SeedList.objects.create(seed_name=data["name"], seed_description=data['text'], days_till_harvest=data[int])
+    def get(self, request, format=None):
+
+        seeds = SeedList.objects.all()
+
+        serializer = SeedSerializer(seeds, many=True)
+
+        return JsonResponse(serializer.data, safe=False)
+
 
     def post(self, request, format=None):
-        seed_name = request.data.get('seed_name')
-        seed_description = request.data.get('seed_description')
-        days_till_harvest = request.data.get('days_till_harvest')
-        plant_spacing = request.data.get('plant_spacing')
-        sun_requirements = request.data.get('sun_requirements')
-        sow_method = request.data.get('sow_method')
+
+        seed_name = request.data['seed_name']
+        seed_description = request.data['seed_description']
+        days_till_harvest = request.data['days_till_harvest']
+        plant_spacing = request.data['plant_spacing']
+        sun_requirements = request.data['sun_requirements']
+        sow_method = request.data['sow_method']
 
         seed = SeedList.objects.create(
-            seed_name=seed_name, 
-            seed_description=seed_description, 
-            days_till_harvest=days_till_harvest, 
+            seed_name=seed_name,
+            seed_description=seed_description,
+            days_till_harvest=days_till_harvest,
             plant_spacing=plant_spacing,
-            sun_requirements=','.join(sun_requirements),
-            sow_method=sow_method)
+            sun_requirements=sun_requirements,
+            sow_method=sow_method
+        )
+
+        serializer = SeedSerializer(seed)
         seed.save()
 
-        return JsonResponse({"message": "Seed successfully added"})
+        return JsonResponse(serializer.data, safe=False)
 
 
-    def put(self, request, seed_id, format=None):
-        try:
-            seed = SeedList.objects.get(id=seed_id)
-            seed.seed_name = request.data.get('seed_name', seed.seed_name)
-            seed.seed_description = request.data.get('seed_description', seed.seed_description)
-            seed.days_till_harvest = request.data.get('days_till_harvest', seed.days_till_harvest)
-            seed.plant_spacing = request.data.get('plant_spacing', seed.plant_spacing)
-            seed.save()
-            return JsonResponse({"message": "Seed successfully updated"})
-        except SeedList.DoesNotExist:
-            return JsonResponse({"message": "Seed not found"}, status=404)
+        # seed_name = request.data.get('seed_name')
+        # seed_description = request.data.get('seed_description')
+        # days_till_harvest = request.data.get('days_till_harvest')
+        # plant_spacing = request.data.get('plant_spacing')
+        # sun_requirements = request.data.get('sun_requirements')
+        # sow_method = request.data.get('sow_method')
 
-class SeedIDSet(APIView):
-    def get(self, request, id, format=None):
-        seed = get_object_or_404(SeedList, pk=id)
+        # seed = SeedList.objects.create(
+        #     seed_name=seed_name, 
+        #     seed_description=seed_description, 
+        #     days_till_harvest=days_till_harvest, 
+        #     plant_spacing=plant_spacing,
+        #     sun_requirements=','.join(sun_requirements),
+        #     sow_method=sow_method)
+        # seed.save()
 
-        return JsonResponse({"seed": seed.to_dict()})
+        # return JsonResponse({"message": "Seed successfully added"})
+
 
 class DeleteSeed(DestroyAPIView):
-    def delete(self, request, id):
-        seed = get_object_or_404(SeedList, pk=id)
+    def delete(self, request, pk):
+        print(f'Deleting seed with id {id}')
+        seed = get_object_or_404(SeedList, pk=pk)
         seed.delete()
 
         return JsonResponse({'message': 'Seed successfully deleted'})
@@ -146,14 +157,12 @@ class ToDoListView(APIView):
 
         return JsonResponse(serializer.data, safe=False)
     def post(self, request, format=None):
-        # add serializer 
 
         task_title = request.data['task_title']
-        # task_description = request.data('task_description')
+       
 
         task = ToDoList.objects.create(
-            task_title=task_title,
-            # task_description=task_description
+            task_title=task_title
         )
         serializer = ToDoListSerializer(task)
         task.save()
