@@ -49,8 +49,8 @@ class JournalIDSet(APIView):
         return JsonResponse({"journal": journal_entry.to_dict()})
 
 class DeleteJournal(DestroyAPIView):
-    def delete(self, request, pk):
-        journal_entry = get_object_or_404(JournalEntry, pk=pk)
+    def delete(self, request, id):
+        journal_entry = get_object_or_404(JournalEntry, pk=id)
         journal_entry.delete()
         
         return JsonResponse({"message": "Journal entry deleted successfully"})
@@ -136,15 +136,17 @@ class GetUsers(APIView):
 class ToDoListView(APIView):
     def get(self, request, format=None):
         tasks = ToDoList.objects.all()
-        data = {
-            'tasks' :  [{
-                'task_title': item.task_title
-            } for item in tasks]
-        }
+
+        serializer = ToDoListSerializer(tasks, many=True)
+        # data = {
+        #     'tasks' :  [
+        #         item for item in tasks]
+        # }
     
 
-        return JsonResponse(data)
+        return JsonResponse(serializer.data, safe=False)
     def post(self, request, format=None):
+        # add serializer 
 
         task_title = request.data['task_title']
         # task_description = request.data('task_description')
@@ -153,15 +155,16 @@ class ToDoListView(APIView):
             task_title=task_title,
             # task_description=task_description
         )
+        serializer = ToDoListSerializer(task)
         task.save()
 
-        return JsonResponse({"message": "Task successfully added"})
+        return JsonResponse(serializer.data, safe=False)
     
 
 class DeleteTask(DestroyAPIView):
-    def delete(self, request, id):
+    def delete(self, request, pk):
         print(f'Deleting task with id {id}')
-        task = get_object_or_404(ToDoList, pk=id)
+        task = get_object_or_404(ToDoList, pk=pk)
         task.delete()
 
         return JsonResponse({'message': 'Task successfully deleted'})
