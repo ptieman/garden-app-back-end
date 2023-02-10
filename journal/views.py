@@ -32,25 +32,49 @@ class HomepageView(APIView):
 
 # JOURNAL
 class JournalViewSet(APIView):
-
     def get(self, request, format=None):
-        queryset = JournalEntry.objects.values()
-        return JsonResponse({"journals": list(queryset)})
+        entries = JournalEntry.objects.all()
+
+        serializer = JournalSerializer(entries, many=True)
+
+        return JsonResponse(serializer.data, safe=False)
+
 
     def post(self, request, format=None):
-        data = request.data
-        journal_entry = JournalEntry.objects.create(journal_title=data['journal_title'], journal_body=data['journal_body'], journal_time_stamp=datetime.datetime.now())
-        return JsonResponse({"journal": journal_entry.to_dict()})
+        journal_title = request.data['journal_title'],
+        journal_body = request.data['journal_body'],
+        # journal_time_stamp = request.data['journal_time_stamp']
+        # journal_time_stamp=datetime.datetime.now()
 
-class JournalIDSet(APIView):
-    def get(self, request, pk, format=None):
-        journal_entry = get_object_or_404(JournalEntry, pk=pk)
+        entry = JournalEntry.objects.create(
+            journal_title=journal_title,
+            journal_body=journal_body,
+            # journal_time_stamp=journal_time_stamp
+        )
 
-        return JsonResponse({"journal": journal_entry.to_dict()})
+        serializer = JournalSerializer(entry)
+
+        entry.save()
+        return JsonResponse(serializer.data, safe=False)
+
+    # def get(self, request, format=None):
+    #     queryset = JournalEntry.objects.values()
+    #     return JsonResponse({"journals": list(queryset)})
+
+    # def post(self, request, format=None):
+    #     data = request.data
+    #     journal_entry = JournalEntry.objects.create(journal_title=data['journal_title'], journal_body=data['journal_body'], journal_time_stamp=datetime.datetime.now())
+    #     return JsonResponse({"journal": journal_entry.to_dict()})
+
+# class JournalIDSet(APIView):
+#     def get(self, request, pk, format=None):
+#         journal_entry = get_object_or_404(JournalEntry, pk=pk)
+
+#         return JsonResponse({"journal": journal_entry.to_dict()})
 
 class DeleteJournal(DestroyAPIView):
-    def delete(self, request, id):
-        journal_entry = get_object_or_404(JournalEntry, pk=id)
+    def delete(self, request, pk):
+        journal_entry = get_object_or_404(JournalEntry, pk=pk)
         journal_entry.delete()
         
         return JsonResponse({"message": "Journal entry deleted successfully"})

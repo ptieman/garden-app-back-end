@@ -6,7 +6,7 @@ from django.contrib.auth.models import AbstractUser
 class JournalEntry(models.Model):
     journal_title = models.CharField(max_length=50)
     journal_body = models.TextField()
-    journal_time_stamp = models.DateField()
+    # journal_time_stamp = models.DateField()
 
     def __str__(self):
         return self.journal_title
@@ -15,7 +15,7 @@ class JournalEntry(models.Model):
         return {
             "journal_title": self.journal_title,
             "journal_body": self.journal_body,
-            "journal_time_stamp": self.journal_time_stamp.strftime("%Y-%m-%d"),
+            # "journal_time_stamp": self.journal_time_stamp.strftime("%Y-%m-%d"),
         }
 
 
