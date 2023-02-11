@@ -202,6 +202,36 @@ class DeleteTask(DestroyAPIView):
 
         return JsonResponse({'message': 'Task successfully deleted'})
 
+
+
+class SupplyListView(APIView):
+    def get(self, request, format=None):
+        supplies = SupplyList.objects.all()
+
+        serializer = SupplyListSerializer(supplies, many=True)
+
+        return JsonResponse(serializer.data, safe=False)
+
+    def post(self, request, format=None):
+
+        supply_name = request.data['supply_name']
+       
+
+        supply = SupplyList.objects.create(
+            supply_name=supply_name
+        )
+        serializer = SupplyListSerializer(supply)
+        supply.save()
+
+        return JsonResponse(serializer.data, safe=False)
+
+class DeleteSupply(DestroyAPIView):
+    def delete(self, request, pk):
+        print(f'Deleting supply with id {id}')
+        supply = get_object_or_404(SupplyList, pk=pk)
+        supply.delete()
+
+        return JsonResponse({'message': 'Supply successfully deleted'})
 # class GetTasks(APIView):
     
 

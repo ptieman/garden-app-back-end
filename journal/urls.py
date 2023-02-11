@@ -3,7 +3,7 @@ from django.contrib import admin
 from rest_framework import routers
 # from django.conf.urls import urls
 from journal.views import JournalViewSet, DeleteJournal, SeedViewSet
-from journal.views import DeleteSeed, CreateUser, GetUsers, ToDoListView, DeleteTask
+from journal.views import DeleteSeed, CreateUser, GetUsers, ToDoListView, DeleteTask, SupplyListView, DeleteSupply
 # plant_hardiness_zone
 from journal.views import HomepageView
 
@@ -24,6 +24,8 @@ urlpatterns = [
     path('seedlist/<int:pk>/', DeleteSeed.as_view()),
     path('tasks/', ToDoListView.as_view()),
     path('tasks/<int:pk>/', DeleteTask.as_view()),
+    path('supplies/', SupplyListView.as_view()),
+    path('supplies/<int:pk>/', DeleteSupply.as_view())
     # path('tasks/<int:pk>', GetTasks.as_view()),
     # path('plant-hardiness/', PlantLibrary.as_view())
     
