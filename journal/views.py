@@ -43,13 +43,10 @@ class JournalViewSet(APIView):
     def post(self, request, format=None):
         journal_title = request.data['journal_title'],
         journal_body = request.data['journal_body'],
-        # journal_time_stamp = request.data['journal_time_stamp']
-        # journal_time_stamp=datetime.datetime.now()
 
         entry = JournalEntry.objects.create(
             journal_title=journal_title,
             journal_body=journal_body,
-            # journal_time_stamp=journal_time_stamp
         )
 
         serializer = JournalSerializer(entry)
@@ -206,12 +203,12 @@ class DeleteTask(DestroyAPIView):
     
 
         # DISABLED BC OF CALLS
-
-# def plant_hardiness_zone(request):
-#     url = "https://plant-hardiness-zone.p.rapidapi.com/zipcodes/90210"
-#     headers = {
-#         "X-RapidAPI-Key": os.environ['API_KEY'],
-#         "X-RapidAPI-Host": "plant-hardiness-zone.p.rapidapi.com"
-#     }
-#     response = requests.request("GET", url, headers=headers)
-#     return JsonResponse(response.json(), safe=False)
+# class PlantLibrary(APIView):
+#     def plant_hardiness_zone(request):
+#         url = "https://plant-hardiness-zone.p.rapidapi.com/zipcodes/90210"
+#         headers = {
+#             "X-RapidAPI-Key": os.environ['API_KEY'],
+#             "X-RapidAPI-Host": "plant-hardiness-zone.p.rapidapi.com"
+#         }
+#         response = requests.request("GET", url, headers=headers)
+#         return JsonResponse(response.json(), safe=False)

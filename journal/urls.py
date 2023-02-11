@@ -25,6 +25,6 @@ urlpatterns = [
     path('tasks/', ToDoListView.as_view()),
     path('tasks/<int:pk>/', DeleteTask.as_view()),
     # path('tasks/<int:pk>', GetTasks.as_view()),
-    # path('plant-hardiness-zone/', plant_hardiness_zone)
+    # path('plant-hardiness/', PlantLibrary.as_view())
     
 ]
