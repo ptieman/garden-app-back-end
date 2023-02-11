@@ -18,6 +18,8 @@ import os
 class HomepageView(APIView):
     def get(self, request):
         latest_journal_entry = JournalEntry.objects.order_by('-journal_time_stamp')[0]
+        latest_todo_list_items = ToDoList.objects.order_by('-id')[:5]
+        latest_todo_list = [{'task_title': item.task_title} for item in latest_todo_list_items]
 
         data = {
             'latest_journal_entry' : {
@@ -25,6 +27,7 @@ class HomepageView(APIView):
                 'journal_body': latest_journal_entry.journal_body,
                 'journal_time_stamp': latest_journal_entry.journal_time_stamp
             },
+            'latest_todo_list': latest_todo_list
         }
 
         return JsonResponse(data)
@@ -41,8 +44,8 @@ class JournalViewSet(APIView):
 
 
     def post(self, request, format=None):
-        journal_title = request.data['journal_title'],
-        journal_body = request.data['journal_body'],
+        journal_title = request.data['journal_title']
+        journal_body = request.data['journal_body']
 
         entry = JournalEntry.objects.create(
             journal_title=journal_title,
